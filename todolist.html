@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #6a0dad; /* Arka planı mor yaptık */
+            margin: 0;
+            display: flex; /* Flexbox kullanımı */
+            justify-content: center; /* Yatayda ortala */
+            align-items: center; /* Dikeyde ortala */
+            height: 100vh; /* Tüm ekran yüksekliğini kapsa */
+        }
+        .container {
+            max-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .input-group {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px; /* Add butonundan biraz ayırdık */
+        }
+        .input-group button {
+            padding: 10px;
+            border: none;
+            background: #28a745;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 18px; /* Büyük "+" için boyut ayarı */
+            font-weight: bold;
+            transition: all 0.2s ease; /* Geçiş animasyonu ekledik */
+        }
+        .input-group button:hover {
+            background: #218838;
+            transform: translateY(-3px); /* Yukarı kalkma efekti */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Gölge efekti */
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        ul li button {
+            background: #dc3545;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 18px; /* Büyük "-" için boyut ayarı */
+            font-weight: bold;
+            transition: all 0.2s ease; /* Geçiş animasyonu ekledik */
+        }
+        ul li button:hover {
+            background: #c82333;
+            transform: translateY(-3px); /* Yukarı kalkma efekti */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Gölge efekti */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <div class="input-group">
+            <input type="text" id="task-input" placeholder="Add a new task...">
+            <button onclick="addTask()">+</button>
+        </div>
+        <ul id="task-list"></ul>
+    </div>
+    <script>
+        function addTask() {
+            const taskInput = document.getElementById('task-input');
+            const taskList = document.getElementById('task-list');
+
+            if (taskInput.value.trim() === '') {
+                alert('Please enter a task.');
+                return;
+            }
+
+            const li = document.createElement('li');
+            li.textContent = taskInput.value;
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = '-';
+            deleteButton.onclick = function () {
+                taskList.removeChild(li);
+            };
+
+            li.appendChild(deleteButton);
+            taskList.appendChild(li);
+
+            taskInput.value = '';
+        }
+    </script>
+</body>
+</html>
