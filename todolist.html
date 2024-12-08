@@ -7,12 +7,12 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #6a0dad; /* Arka planı mor yaptık */
+            background-color: #6a0dad;
             margin: 0;
-            display: flex; /* Flexbox kullanımı */
-            justify-content: center; /* Yatayda ortala */
-            align-items: center; /* Dikeyde ortala */
-            height: 100vh; /* Tüm ekran yüksekliğini kapsa */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
             max-width: 400px;
@@ -34,7 +34,7 @@
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            margin-right: 10px; /* Add butonundan biraz ayırdık */
+            margin-right: 10px;
         }
         .input-group button {
             padding: 10px;
@@ -43,14 +43,14 @@
             color: white;
             cursor: pointer;
             border-radius: 4px;
-            font-size: 18px; /* Büyük "+" için boyut ayarı */
+            font-size: 18px;
             font-weight: bold;
-            transition: all 0.2s ease; /* Geçiş animasyonu ekledik */
+            transition: all 0.2s ease;
         }
         .input-group button:hover {
             background: #218838;
-            transform: translateY(-3px); /* Yukarı kalkma efekti */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Gölge efekti */
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         ul {
             list-style-type: none;
@@ -65,22 +65,29 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            cursor: grab;
+        }
+        ul li.dragging {
+            opacity: 0.5;
         }
         ul li button {
+            margin-left: 5px;
             background: #dc3545;
             border: none;
             color: white;
             padding: 5px 10px;
             cursor: pointer;
             border-radius: 4px;
-            font-size: 18px; /* Büyük "-" için boyut ayarı */
+            font-size: 18px;
             font-weight: bold;
-            transition: all 0.2s ease; /* Geçiş animasyonu ekledik */
+            transition: all 0.2s ease;
+        }
+        ul li button.edit {
+            background: #ffc107;
         }
         ul li button:hover {
-            background: #c82333;
-            transform: translateY(-3px); /* Yukarı kalkma efekti */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Gölge efekti */
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
@@ -103,19 +110,61 @@
                 return;
             }
 
+            const li = createTaskElement(taskInput.value);
+            taskList.appendChild(li);
+
+            taskInput.value = '';
+        }
+
+        function createTaskElement(taskText) {
             const li = document.createElement('li');
-            li.textContent = taskInput.value;
+            li.draggable = true; // Sürüklenebilir yapıyoruz
+            li.textContent = taskText;
+
+            const editButton = document.createElement('button');
+            editButton.textContent = '✏️';
+            editButton.className = 'edit';
+            editButton.onclick = function () {
+                const newText = prompt('Edit your task:', taskText);
+                if (newText !== null && newText.trim() !== '') {
+                    li.firstChild.textContent = newText;
+                }
+            };
 
             const deleteButton = document.createElement('button');
             deleteButton.textContent = '-';
             deleteButton.onclick = function () {
-                taskList.removeChild(li);
+                li.remove();
             };
 
+            li.appendChild(editButton);
             li.appendChild(deleteButton);
-            taskList.appendChild(li);
 
-            taskInput.value = '';
+            addDragAndDropEvents(li);
+
+            return li;
+        }
+
+        function addDragAndDropEvents(li) {
+            li.addEventListener('dragstart', () => {
+                li.classList.add('dragging');
+            });
+
+            li.addEventListener('dragend', () => {
+                li.classList.remove('dragging');
+            });
+
+            li.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                const taskList = document.getElementById('task-list');
+                const draggingElement = document.querySelector('.dragging');
+                const siblings = Array.from(taskList.children).filter((child) => child !== draggingElement);
+                const nextSibling = siblings.find((sibling) => {
+                    const box = sibling.getBoundingClientRect();
+                    return event.clientY < box.top + box.height / 2;
+                });
+                taskList.insertBefore(draggingElement, nextSibling);
+            });
         }
     </script>
 </body>
